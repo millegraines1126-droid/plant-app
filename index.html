@@ -1,124 +1,635 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>数秘×観葉植物診断</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>生年月日でわかる観葉植物診断</title>
+  <style>
+    * { box-sizing: border-box; }
 
-<style>
-body {
-  font-family: "Hiragino Kaku Gothic ProN", sans-serif;
-  background: linear-gradient(135deg,#fdf7fb,#f7efe3);
-  margin:0;
-  color:#5f4b53;
-}
+    body {
+      margin: 0;
+      font-family: "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
+      background: linear-gradient(135deg, #fdf7fb 0%, #f7efe3 100%);
+      color: #5f4b53;
+    }
 
-.wrapper {
-  max-width:900px;
-  margin:auto;
-  padding:20px;
-}
+    .wrapper {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 24px 16px 48px;
+    }
 
-.card {
-  background:white;
-  border-radius:20px;
-  padding:25px;
-  box-shadow:0 10px 30px rgba(0,0,0,0.08);
-}
+    .main-card {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 28px;
+      padding: 32px 20px 40px;
+      box-shadow: 0 12px 32px rgba(120, 90, 100, 0.12);
+      border: 1px solid rgba(214, 188, 196, 0.5);
+    }
 
-h1 {
-  text-align:center;
-  color:#b76e79;
-}
+    h1 {
+      text-align: center;
+      margin: 0 0 14px;
+      font-size: 2rem;
+      line-height: 1.4;
+      color: #b76e79;
+      letter-spacing: 0.03em;
+    }
 
-.lead {
-  text-align:center;
-  margin-bottom:20px;
-  line-height:1.8;
-}
+    .lead {
+      max-width: 720px;
+      margin: 0 auto 28px;
+      line-height: 1.95;
+      color: #7b6770;
+      font-size: 1rem;
+      text-align: center;
+    }
 
-input,button {
-  width:100%;
-  padding:15px;
-  border-radius:10px;
-  border:none;
-  margin-top:10px;
-  font-size:16px;
-}
+    .input-card {
+      max-width: 560px;
+      margin: 0 auto 24px;
+      background: #fffafc;
+      border: 1px solid #efd8de;
+      border-radius: 20px;
+      padding: 20px;
+    }
 
-button {
-  background:linear-gradient(90deg,#e8a7b1,#d7b46a);
-  color:white;
-  font-weight:bold;
-}
+    label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 10px;
+      color: #8e6d58;
+      font-size: 1.05rem;
+      text-align: left;
+    }
 
-.result {
-  margin-top:30px;
-}
+    input[type="date"] {
+      width: 100%;
+      padding: 14px;
+      border-radius: 14px;
+      border: 1px solid #d7c4ca;
+      font-size: 16px;
+      background: #fff;
+      color: #5f4b53;
+    }
 
-.plant {
-  background:#fff;
-  padding:15px;
-  border-radius:15px;
-  margin-bottom:10px;
-  box-shadow:0 5px 15px rgba(0,0,0,0.05);
-}
-</style>
+    button {
+      width: 100%;
+      margin-top: 16px;
+      padding: 15px 18px;
+      border: none;
+      border-radius: 14px;
+      background: linear-gradient(90deg, #d78ea1, #caa45d);
+      color: white;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 8px 18px rgba(183, 110, 121, 0.22);
+      transition: transform 0.15s ease, opacity 0.15s ease;
+    }
+
+    button:hover {
+      opacity: 0.96;
+      transform: translateY(-1px);
+    }
+
+    .result {
+      display: none;
+      margin-top: 28px;
+    }
+
+    .summary {
+      background: #fff;
+      border: 1px solid #ead8dd;
+      border-radius: 22px;
+      padding: 24px;
+      margin-bottom: 22px;
+      box-shadow: 0 8px 22px rgba(0, 0, 0, 0.04);
+      text-align: center;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: #f8e4ea;
+      color: #b76e79;
+      font-weight: bold;
+      margin-bottom: 14px;
+      font-size: 0.95rem;
+    }
+
+    .type-title {
+      font-size: 1.8rem;
+      margin: 0 0 8px;
+      color: #8a6f55;
+    }
+
+    .keywords {
+      color: #9a7f66;
+      font-weight: bold;
+      margin-bottom: 12px;
+      line-height: 1.7;
+    }
+
+    .summary-message {
+      line-height: 1.95;
+      color: #6d5d63;
+      margin: 0 auto;
+      white-space: pre-line;
+      max-width: 720px;
+      text-align: left;
+    }
+
+    .section-title {
+      text-align: center;
+      margin: 30px 0 18px;
+      font-size: 1.3rem;
+      color: #8a6f55;
+    }
+
+    .plant-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+
+    .plant-card {
+      background: #fff;
+      border: 1px solid #ead8dd;
+      border-radius: 20px;
+      padding: 18px;
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.04);
+      text-align: left;
+    }
+
+    .plant-name {
+      font-size: 1.15rem;
+      font-weight: bold;
+      color: #b76e79;
+      margin-bottom: 8px;
+    }
+
+    .flower-word {
+      font-size: 0.95rem;
+      color: #9a7f66;
+      margin-bottom: 10px;
+      font-weight: bold;
+      line-height: 1.7;
+    }
+
+    .plant-copy {
+      line-height: 1.85;
+      color: #6d5d63;
+      font-size: 0.96rem;
+      white-space: pre-line;
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 28px;
+      color: #8b7c80;
+      font-size: 0.9rem;
+      line-height: 1.8;
+    }
+
+    @media (max-width: 800px) {
+      .wrapper {
+        padding: 18px 12px 36px;
+      }
+
+      .main-card {
+        padding: 24px 14px 32px;
+      }
+
+      h1 {
+        font-size: 1.72rem;
+      }
+
+      .lead {
+        text-align: left;
+      }
+
+      .type-title {
+        font-size: 1.5rem;
+      }
+
+      .plant-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .summary {
+        padding: 20px 16px;
+      }
+
+      .plant-card {
+        padding: 16px;
+      }
+    }
+  </style>
 </head>
-
 <body>
-<div class="wrapper">
-<div class="card">
+  <div class="wrapper">
+    <div class="main-card">
+      <h1>🌿 生年月日でわかる<br>観葉植物診断</h1>
 
-<h1>🌿 数秘×観葉植物診断</h1>
+      <p class="lead">
+        生年月日からあなたの「生まれ持った性質」を読み解き、<br>
+        あなたのテーマに寄り添う観葉植物をご紹介します。<br>
+        ※お誕生日を入れるだけで診断できます
+      </p>
 
-<p class="lead">
-生年月日からあなたの本質を読み解き、<br>
-今のあなたにぴったりの観葉植物をご提案します
-</p>
+      <div class="input-card">
+        <label for="birthdate">生年月日を入力してください</label>
+        <input type="date" id="birthdate" />
+        <button onclick="diagnose()">診断する</button>
+      </div>
 
-<input type="date" id="birth">
-<button onclick="calc()">診断する</button>
+      <div id="result" class="result">
+        <div class="summary">
+          <div id="badge" class="badge"></div>
+          <h2 id="typeTitle" class="type-title"></h2>
+          <div id="keywords" class="keywords"></div>
+          <p id="summaryMessage" class="summary-message"></p>
+        </div>
 
-<div id="result" class="result"></div>
+        <h3 class="section-title">あなたのテーマに寄り添う観葉植物</h3>
+        <div id="plantGrid" class="plant-grid"></div>
 
-</div>
-</div>
+        <div class="footer">
+          花言葉と数秘のテーマをもとにご紹介しています ✨
+        </div>
+      </div>
+    </div>
+  </div>
 
-<script>
+  <script>
+    const numerologyData = {
+      1: {
+        title: "1｜始まり・リーダー",
+        keywords: "キーワード：スタート・自立・前進",
+        summary: "あなたは、自分の意志で道を切り開いていく人です。\n新しい流れをつくり、未来へ向かって進んでいく力を持っています。",
+        plants: [
+          {
+            name: "ユッカ",
+            word: "勇壮、偉大",
+            copy: "力強く前に進みたいあなたに。\n自分らしい挑戦を後押ししてくれる植物です。"
+          },
+          {
+            name: "ストレリチア・レギネ",
+            word: "輝かしい未来、寛容",
+            copy: "新しい可能性を広げたいあなたに。\n未来へ向かう明るいエネルギーを届けてくれます。"
+          },
+          {
+            name: "ガジュマル",
+            word: "健康",
+            copy: "生命力を高めながら進みたいあなたに。\nスタートの土台を整えてくれる植物です。"
+          },
+          {
+            name: "フィカス・アルテシマ",
+            word: "永遠の幸福",
+            copy: "前向きな始まりを大切にしたいあなたに。\n軽やかなスタートを支えてくれる植物です。"
+          }
+        ]
+      },
 
-const plants = {
-1:["ユッカ","ストレリチア・レギネ","ドラセナ","モンステラ"],
-2:["ポトス","ペペロミア","アグラオネマ","カラテア"],
-3:["ミリオンバンブー","フィロデンドロン","コルジリネ","アンスリウム"],
-4:["サンスベリア","ガジュマル","フィカス・アルテシマ","フィカス・ウンベラータ"],
-5:["エアープランツ","コーヒーの木","ベンジャミン","ストレリチア・オーガスタ"],
-6:["アイビー","パキラ","マランタ","ネオレゲリア"],
-7:["オリーブ","アジアンタム","ビカクシダ","カラジューム"],
-8:["パキラ","フィカス・バーガンディ","ストレリチア・オーガスタ","ザミオクルカス"],
-9:["アロカシア","ケスネリア","ビルベルギア","クテナンテ"]
-};
+      2: {
+        title: "2｜調和・愛",
+        keywords: "キーワード：つながり・やさしさ・調和",
+        summary: "あなたは、人とのつながりや心の調和を大切にする人です。\n思いやりと受容の力で、周りに安心感を届けます。",
+        plants: [
+          {
+            name: "フィカス・ウンベラータ",
+            word: "永久の幸せ、夫婦愛",
+            copy: "大切な人との関係を育てたいあなたに。\nあたたかな安心感をもたらしてくれる植物です。"
+          },
+          {
+            name: "ヘデラ（アイビー）",
+            word: "永遠の愛、友情、誠実、不滅",
+            copy: "ご縁や絆を大切にしたいあなたに。\n長く続くつながりをやさしく支えてくれます。"
+          },
+          {
+            name: "ポトス",
+            word: "永遠の富",
+            copy: "心の循環や豊かな関係性を大切にしたいあなたに。\nやわらかな調和を広げてくれる植物です。"
+          },
+          {
+            name: "アンスリウム",
+            word: "情熱",
+            copy: "愛を素直に表現したいあなたに。\nあたたかさと魅力を引き出してくれる植物です。"
+          }
+        ]
+      },
 
-function calc(){
-  let val = document.getElementById("birth").value;
-  if(!val){alert("日付を入力してください");return;}
+      3: {
+        title: "3｜楽しさ・表現",
+        keywords: "キーワード：喜び・表現・明るさ",
+        summary: "あなたは、楽しさや明るさで周りを照らす人です。\n自分らしく表現することで、自然と人を惹きつける魅力があります。",
+        plants: [
+          {
+            name: "ミリオンバンブー",
+            word: "幸福",
+            copy: "毎日を明るく楽しみたいあなたに。\n幸せな空気を自然に広げてくれる植物です。"
+          },
+          {
+            name: "ペペロミア",
+            word: "豊やか、可愛らしさ",
+            copy: "やさしく軽やかに表現したいあなたに。\n親しみやすい魅力を引き出してくれる植物です。"
+          },
+          {
+            name: "カラジューム",
+            word: "喜び、歓喜、爽やかさ",
+            copy: "心が弾むような毎日を大切にしたいあなたに。\n楽しさとワクワクを運んでくれる植物です。"
+          },
+          {
+            name: "ネオレゲリア",
+            word: "博愛",
+            copy: "明るさとやさしさを表現したいあなたに。\n華やかな存在感で魅力を広げてくれる植物です。"
+          }
+        ]
+      },
 
-  let num = val.replace(/-/g,"").split("").reduce((a,b)=>a+Number(b),0);
+      4: {
+        title: "4｜安定・基盤",
+        keywords: "キーワード：安心・継続・土台",
+        summary: "あなたは、安定した土台をつくる人です。\nコツコツと積み重ねながら、信頼と安心を育てていく力があります。",
+        plants: [
+          {
+            name: "サンスベリア",
+            word: "永久、不滅",
+            copy: "長く安定した流れを大切にしたいあなたに。\nどっしりとした土台を感じさせてくれる植物です。"
+          },
+          {
+            name: "フィカス・ベンガレンシス",
+            word: "長寿",
+            copy: "じっくりと育てる安心感を大切にしたいあなたに。\n穏やかな安定を支えてくれる植物です。"
+          },
+          {
+            name: "コルジリネ",
+            word: "幸福な交際、さわやかな交際",
+            copy: "安定した人間関係を大切にしたいあなたに。\n爽やかな信頼関係を育ててくれる植物です。"
+          },
+          {
+            name: "コーヒーノキ",
+            word: "一緒に休みましょう",
+            copy: "無理をせず整えて進みたいあなたに。\n落ち着いた日常のリズムを思い出させてくれる植物です。"
+          }
+        ]
+      },
 
-  while(num > 9){
-    num = num.toString().split("").reduce((a,b)=>a+Number(b),0);
-  }
+      5: {
+        title: "5｜自由・変化",
+        keywords: "キーワード：変化・行動・軽やかさ",
+        summary: "あなたは、変化の中で輝く人です。\n自由な感性と行動力があり、新しい流れをつくっていくエネルギーを持っています。",
+        plants: [
+          {
+            name: "アグラオネマ",
+            word: "青春の輝き、スマート",
+            copy: "軽やかに自分らしく進みたいあなたに。\n変化の中でもしなやかさを保たせてくれる植物です。"
+          },
+          {
+            name: "スキンダプサス",
+            word: "小さな愛",
+            copy: "変化の中でもやさしさを忘れたくないあなたに。\n肩の力を抜いて進ませてくれる植物です。"
+          },
+          {
+            name: "ザミオクルカス",
+            word: "輝く未来",
+            copy: "新しい未来へ向かって進みたいあなたに。\n変化を希望へつなげてくれる植物です。"
+          },
+          {
+            name: "ティランジア",
+            word: "不屈",
+            copy: "自由な発想で進みたいあなたに。\n枠にとらわれない軽やかさを応援してくれる植物です。"
+          }
+        ]
+      },
 
-  let html = "<h2>あなたのタイプ："+num+"</h2>";
+      6: {
+        title: "6｜愛・家庭",
+        keywords: "キーワード：ぬくもり・愛・包容力",
+        summary: "あなたは、人を守り、愛を育てる人です。\n身近な人とのつながりを大切にし、周りをあたたかく包み込む存在です。",
+        plants: [
+          {
+            name: "モンステラ",
+            word: "嬉しい便り、壮大な計画",
+            copy: "家庭や身近な人との調和を大切にしたいあなたに。\nあたたかな広がりを感じさせてくれる植物です。"
+          },
+          {
+            name: "マランタ",
+            word: "温かい祈り、永遠の富",
+            copy: "やさしさや祈りの気持ちを大切にしたいあなたに。\nぬくもりのある空気を育ててくれる植物です。"
+          },
+          {
+            name: "カラテア",
+            word: "飛躍、強い思い、あたたかい心",
+            copy: "愛を持って前向きに進みたいあなたに。\n心のぬくもりと希望を支えてくれる植物です。"
+          },
+          {
+            name: "ベンジャミン",
+            word: "永遠の愛、信頼、友情、結婚、家族の絆",
+            copy: "家族や大切な人との絆を深めたいあなたに。\n安心できる関係性を育ててくれる植物です。"
+          }
+        ]
+      },
 
-  plants[num].forEach(p=>{
-    html += `<div class="plant">${p}</div>`;
-  });
+      7: {
+        title: "7｜内面・精神",
+        keywords: "キーワード：本質・静けさ・知性",
+        summary: "あなたは、物事の本質を深く見つめる人です。\n静かな時間の中で自分を整えながら、内側から輝いていくタイプです。",
+        plants: [
+          {
+            name: "オリーブ",
+            word: "平和、知恵、勝利",
+            copy: "心の静けさと知恵を大切にしたいあなたに。\n穏やかで深い落ち着きをもたらしてくれる植物です。"
+          },
+          {
+            name: "アジアンタム",
+            word: "繊細、無垢、天真爛漫、無邪気",
+            copy: "繊細な感性を大切にしたいあなたに。\n心をやさしく整え、静かな美しさを支えてくれる植物です。"
+          },
+          {
+            name: "ビカクシダ",
+            word: "信頼、助け合う、魔法",
+            copy: "自分だけの感覚を大切にしたいあなたに。\n神秘的な魅力と内面の深さを感じさせてくれる植物です。"
+          },
+          {
+            name: "フィロデンドロン",
+            word: "壮大な美、華やかな明るさ",
+            copy: "内面の豊かさを大切にしたいあなたに。\n静けさの中にも広がりを感じさせてくれる植物です。"
+          }
+        ]
+      },
 
-  document.getElementById("result").innerHTML = html;
-}
+      8: {
+        title: "8｜成功・豊かさ",
+        keywords: "キーワード：実現力・発展・豊かさ",
+        summary: "あなたは、豊かさを現実にしていく人です。\n力強い実行力と結果を出す力があり、仕事や現実面で大きく花開くタイプです。",
+        plants: [
+          {
+            name: "パキラ",
+            word: "快活、勝利",
+            copy: "現実を動かし、豊かさを育てたいあなたに。\n成功と前進の流れを後押ししてくれる植物です。"
+          },
+          {
+            name: "フィカス・バーガンディ",
+            word: "永久の幸せ、健やか",
+            copy: "豊かさと安定の両方を大切にしたいあなたに。\nどっしりとした力強さを与えてくれる植物です。"
+          },
+          {
+            name: "ストレリチア・オーガスタ",
+            word: "輝かしい未来、あたたかい心",
+            copy: "大きな未来へ向かって進みたいあなたに。\n発展のエネルギーを届けてくれる植物です。"
+          },
+          {
+            name: "ケスネリア",
+            word: "いつも快活、喜び",
+            copy: "明るく前向きな成功を目指したいあなたに。\n豊かさの流れを軽やかに広げてくれる植物です。"
+          }
+        ]
+      },
 
-</script>
+      9: {
+        title: "9｜博愛・統合",
+        keywords: "キーワード：やさしさ・包容力・広い愛",
+        summary: "あなたは、広い視野で人を包み込む人です。\n深いやさしさと成熟した愛で、周りに安心と希望を与える存在です。",
+        plants: [
+          {
+            name: "ビルベルギア",
+            word: "情熱、熱意、勇気",
+            copy: "人の力になりながら前に進みたいあなたに。\nやさしさの中にある強さを支えてくれる植物です。"
+          },
+          {
+            name: "アロエ",
+            word: "健康、万能、信頼",
+            copy: "人にも自分にもやさしくありたいあなたに。\n癒しと支えのエネルギーを届けてくれる植物です。"
+          },
+          {
+            name: "ネオレゲリア",
+            word: "博愛",
+            copy: "広い愛で人と関わりたいあなたに。\nあたたかな包容力を感じさせてくれる植物です。"
+          },
+          {
+            name: "コルジリネ",
+            word: "幸福な交際、さわやかな交際",
+            copy: "やさしいつながりを大切にしたいあなたに。\n調和のとれた関係を広げてくれる植物です。"
+          }
+        ]
+      },
 
+      11: {
+        title: "11｜直感・感受性",
+        keywords: "キーワード：ひらめき・感受性・直感",
+        summary: "あなたは、直感とインスピレーションに優れた人です。\n見えないものを感じ取る感性があり、自分らしい感覚で道を選んでいくタイプです。",
+        plants: [
+          {
+            name: "ティランジア",
+            word: "不屈",
+            copy: "自分の感覚を大切にしたいあなたに。\n自由な発想とひらめきを支えてくれる植物です。"
+          },
+          {
+            name: "アロカシア",
+            word: "復縁、仲直り",
+            copy: "心のつながりを繊細に感じ取るあなたに。\n感情のバランスを整えるきっかけをくれる植物です。"
+          },
+          {
+            name: "コーヒーノキ",
+            word: "一緒に休みましょう",
+            copy: "直感を大切にしながら整いたいあなたに。\n静かに感性を研ぎ澄ませてくれる植物です。"
+          }
+        ]
+      },
+
+      22: {
+        title: "22｜現実化・大きな成功",
+        keywords: "キーワード：実現・拡大・大きな夢",
+        summary: "あなたは、大きな夢を形にしていく力を持つ人です。\n理想を現実へと落とし込みながら、広い世界で発展していくタイプです。",
+        plants: [
+          {
+            name: "パキラ",
+            word: "快活、勝利",
+            copy: "夢を現実に変えていきたいあなたに。\n成功へ向かう行動力を支えてくれる植物です。"
+          },
+          {
+            name: "モンステラ",
+            word: "嬉しい便り、壮大な計画",
+            copy: "大きなビジョンを形にしたいあなたに。\n広がりのある未来を感じさせてくれる植物です。"
+          },
+          {
+            name: "ストレリチア・オーガスタ",
+            word: "輝かしい未来、あたたかい心",
+            copy: "発展と実現の両方を大切にしたいあなたに。\n堂々とした未来の流れを後押ししてくれる植物です。"
+          }
+        ]
+      },
+
+      33: {
+        title: "33｜無償の愛・奉仕",
+        keywords: "キーワード：愛・平和・包容力",
+        summary: "あなたは、深い愛と平和を広げる人です。\n人を包み込み、やさしく調和へと導く特別なあたたかさを持っています。",
+        plants: [
+          {
+            name: "ポトス",
+            word: "永遠の富",
+            copy: "愛や豊かさを循環させたいあなたに。\nやわらかくあたたかなつながりを育ててくれる植物です。"
+          },
+          {
+            name: "アンスリウム",
+            word: "情熱",
+            copy: "愛を大きく表現したいあなたに。\nあたたかい心と魅力を広げてくれる植物です。"
+          },
+          {
+            name: "ヘデラ（アイビー）",
+            word: "永遠の愛、友情、誠実、不滅",
+            copy: "深く長く続く愛を大切にしたいあなたに。\nやさしい絆を育ててくれる植物です。"
+          }
+        ]
+      }
+    };
+
+    function calculateLifePathNumber(dateString) {
+      const digits = dateString.replaceAll("-", "").split("").map(Number);
+      let sum = digits.reduce((a, b) => a + b, 0);
+
+      while (![1,2,3,4,5,6,7,8,9,11,22,33].includes(sum)) {
+        sum = sum.toString().split("").map(Number).reduce((a, b) => a + b, 0);
+      }
+      return sum;
+    }
+
+    function diagnose() {
+      const birthdate = document.getElementById("birthdate").value;
+      if (!birthdate) {
+        alert("生年月日を入力してください。");
+        return;
+      }
+
+      const number = calculateLifePathNumber(birthdate);
+      const result = numerologyData[number];
+
+      document.getElementById("badge").textContent = `あなたのタイプは ${number}`;
+      document.getElementById("typeTitle").textContent = result.title;
+      document.getElementById("keywords").textContent = result.keywords;
+      document.getElementById("summaryMessage").textContent = result.summary;
+
+      const plantGrid = document.getElementById("plantGrid");
+      plantGrid.innerHTML = "";
+
+      result.plants.forEach((plant) => {
+        const card = document.createElement("div");
+        card.className = "plant-card";
+        card.innerHTML = `
+          <div class="plant-name">${plant.name}</div>
+          <div class="flower-word">花言葉：${plant.word}</div>
+          <div class="plant-copy">${plant.copy}</div>
+        `;
+        plantGrid.appendChild(card);
+      });
+
+      document.getElementById("result").style.display = "block";
+      document.getElementById("result").scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  </script>
 </body>
 </html>
