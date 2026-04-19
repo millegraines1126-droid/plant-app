@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>数秘×観葉植物診断</title>
+
+<style>
+body {
+  font-family: "Hiragino Kaku Gothic ProN", sans-serif;
+  background: linear-gradient(135deg,#fdf7fb,#f7efe3);
+  margin:0;
+  color:#5f4b53;
+}
+
+.wrapper {
+  max-width:900px;
+  margin:auto;
+  padding:20px;
+}
+
+.card {
+  background:white;
+  border-radius:20px;
+  padding:25px;
+  box-shadow:0 10px 30px rgba(0,0,0,0.08);
+}
+
+h1 {
+  text-align:center;
+  color:#b76e79;
+}
+
+.lead {
+  text-align:center;
+  margin-bottom:20px;
+  line-height:1.8;
+}
+
+input,button {
+  width:100%;
+  padding:15px;
+  border-radius:10px;
+  border:none;
+  margin-top:10px;
+  font-size:16px;
+}
+
+button {
+  background:linear-gradient(90deg,#e8a7b1,#d7b46a);
+  color:white;
+  font-weight:bold;
+}
+
+.result {
+  margin-top:30px;
+}
+
+.plant {
+  background:#fff;
+  padding:15px;
+  border-radius:15px;
+  margin-bottom:10px;
+  box-shadow:0 5px 15px rgba(0,0,0,0.05);
+}
+</style>
+</head>
+
+<body>
+<div class="wrapper">
+<div class="card">
+
+<h1>🌿 数秘×観葉植物診断</h1>
+
+<p class="lead">
+生年月日からあなたの本質を読み解き、<br>
+今のあなたにぴったりの観葉植物をご提案します
+</p>
+
+<input type="date" id="birth">
+<button onclick="calc()">診断する</button>
+
+<div id="result" class="result"></div>
+
+</div>
+</div>
+
+<script>
+
+const plants = {
+1:["ユッカ","ストレリチア・レギネ","ドラセナ","モンステラ"],
+2:["ポトス","ペペロミア","アグラオネマ","カラテア"],
+3:["ミリオンバンブー","フィロデンドロン","コルジリネ","アンスリウム"],
+4:["サンスベリア","ガジュマル","フィカス・アルテシマ","フィカス・ウンベラータ"],
+5:["エアープランツ","コーヒーの木","ベンジャミン","ストレリチア・オーガスタ"],
+6:["アイビー","パキラ","マランタ","ネオレゲリア"],
+7:["オリーブ","アジアンタム","ビカクシダ","カラジューム"],
+8:["パキラ","フィカス・バーガンディ","ストレリチア・オーガスタ","ザミオクルカス"],
+9:["アロカシア","ケスネリア","ビルベルギア","クテナンテ"]
+};
+
+function calc(){
+  let val = document.getElementById("birth").value;
+  if(!val){alert("日付を入力してください");return;}
+
+  let num = val.replace(/-/g,"").split("").reduce((a,b)=>a+Number(b),0);
+
+  while(num > 9){
+    num = num.toString().split("").reduce((a,b)=>a+Number(b),0);
+  }
+
+  let html = "<h2>あなたのタイプ："+num+"</h2>";
+
+  plants[num].forEach(p=>{
+    html += `<div class="plant">${p}</div>`;
+  });
+
+  document.getElementById("result").innerHTML = html;
+}
+
+</script>
+
+</body>
+</html>
